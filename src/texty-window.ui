@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="TextyWindow" parent="AdwApplicationWindow">
+    <property name="default-width">1000</property>
+    <property name="default-height">600</property>
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
+            <child type="start">
+              <object class="GtkButton" id="new_button">
+                <property name="action-name">win.new</property>
+                <property name="child">
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">document-new-symbolic</property>
+                    <property name="label">New</property>
+                    <property name="tooltip-text">Start a new file</property>"
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child type="start">
+              <object class="GtkButton" id="open_button">
+                <property name="action-name">win.open</property>
+                <property name="child">
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">document-open-symbolic</property>
+                    <property name="label">Open</property>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child type="start">
+              <object class="GtkButton" id="save_button">
+                <property name="action-name">win.save</property>
+                <property name="child">
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">document-save-symbolic</property>
+                    <property name="label">Save</property>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child type="start">
+              <object class="GtkButton" id="save_as_button">
+                <property name="action-name">win.save_as</property>
+                <property name="child">
+                  <object class="AdwButtonContent">
+                    <property name="icon-name">document-save-as-symbolic</property>
+                    <property name="label">Save As</property>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkMenuButton">
+                <property name="primary">True</property>
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="tooltip-text">Menu</property>
+                <property name="menu-model">primary_menu</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow" id="scroller">
+            <child type="top">
+              <object class="GtkTextView" id="text_view">
+                <property name="monospace">True</property>
+                <property name="wrap_mode">GTK_WRAP_WORD</property>
+                <property name="top-margin">15</property>
+                <property name="right-margin">15</property>
+                <property name="bottom-margin">15</property>
+                <property name="left-margin">15</property>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+  <menu id="primary_menu">
+    <section>
+      <item>
+        <attribute name="label">_About texty</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
+
