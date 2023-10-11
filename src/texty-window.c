@@ -45,9 +45,7 @@ texty_window_new_action(GSimpleAction *action,
 {
   g_print ("new");
 }
-
 /*
-
 static void
 open_file_complete (GObject       *source_object,
                     GAsyncResult  *result,
@@ -101,7 +99,7 @@ open_file_complete (GObject       *source_object,
   gtk_text_buffer_get_start_iter (buffer, &start);
   gtk_text_buffer_place_cursor (buffer, &start);
 }
-
+*/
 static void
 open_callback (GObject      *source,
                GAsyncResult *result,
@@ -112,18 +110,18 @@ open_callback (GObject      *source,
   GtkRoot *root;
   GtkWindow *window;
 
-  file = gtk_file_dialog_open_finish (dialog, result, NULL);
-  if (file)
-    {
-      g_print ("File selected: %s", g_file_peek_path (file));
-      root = gtk_widget_get_root (dialog);
-      window = GTK_WINDOW (root);
-      g_file_load_contents_async (file,
-                                  NULL,
-                                  (GAsyncReadyCallback) open_file_complete,
-                                  window);
-      g_object_unref (file);
-    }
+  /* file = gtk_file_dialog_open_finish (dialog, result, NULL); */
+  /* if (file) */
+  /*   { */
+  /*     g_print ("File selected: %s", g_file_peek_path (file)); */
+  /*     root = gtk_widget_get_root (dialog); */
+  /*     window = GTK_WINDOW (root); */
+  /*     g_file_load_contents_async (file, */
+  /*                                 NULL, */
+  /*                                 (GAsyncReadyCallback) open_file_complete, */
+  /*                                 window); */
+  /*     g_object_unref (file); */
+  /*   } */
 }
 
 static void
