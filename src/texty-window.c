@@ -27,10 +27,11 @@ struct _TextyWindow
 	AdwApplicationWindow  parent_instance;
 
 	/* Template widgets */
-	AdwHeaderBar  *header_bar;
-	GtkTextView   *main_text_view;
-        GtkButton     *save_button;
-        GtkLabel      *cursor_pos;
+	AdwHeaderBar    *header_bar;
+	GtkTextView     *main_text_view;
+        GtkButton       *save_button;
+        GtkLabel        *cursor_pos;
+        AdwToastOverlay *toast_overlay;
 };
 
 G_DEFINE_FINAL_TYPE (TextyWindow, texty_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -46,6 +47,7 @@ texty_window_class_init (TextyWindowClass *klass)
 	gtk_widget_class_bind_template_child (widget_class, TextyWindow, main_text_view);
         gtk_widget_class_bind_template_child (widget_class, TextyWindow, save_button);
         gtk_widget_class_bind_template_child (widget_class, TextyWindow, cursor_pos);
+        gtk_widget_class_bind_template_child (widget_class, TextyWindow, toast_overlay);
 }
 
 static void
@@ -176,6 +178,8 @@ save_file_complete (GObject      *source_object,
 {
   g_autofree char *display_name;
   g_autoptr (GFileInfo) info;
+  g_autofree char *msg;
+  TextyWindow *self;
 
   GFile *file = G_FILE (source_object);
 
@@ -199,12 +203,14 @@ save_file_complete (GObject      *source_object,
       display_name = g_file_get_basename (file);
     }
 
-  if (error != NULL)
-    {
-      g_printerr ("Unable to save “%s”: %s\n",
-                  display_name,
-                  error->message);
-    }
+    msg = NULL;
+    if (error != NULL)
+      msg = g_strdup_printf ("Unable to save as “%s”", display_name);
+    else
+      msg = g_strdup_printf ("Saved as “%s”", display_name);
+
+    self = TEXTY_WINDOW (user_data);
+    adw_toast_overlay_add_toast (self->toast_overlay, adw_toast_new (msg));
 }
 
 // new file
@@ -300,21 +306,23 @@ open_file_complete (GObject          *source_object,
             display_name = g_file_get_basename (file);
           }
 
-        // In case of error, print a warning to the standard error output
+        // In case of error, show a toast
         if (error != NULL)
           {
-            g_printerr ("Unable to open “%s”: %s\n",
-                        g_file_peek_path (file),
-                        error->message);
+            g_autofree char *msg =
+              g_strdup_printf ("Unable to open “%s”", display_name);
+
+            adw_toast_overlay_add_toast (self->toast_overlay, adw_toast_new (msg));
             return;
           }
 
         // Ensure that the file is encoded with UTF-8
         if (!g_utf8_validate (contents, length, NULL))
           {
-            g_printerr ("Unable to load the contents of “%s”: "
-                        "the file is not encoded with UTF-8\n",
-                        g_file_peek_path (file));
+            g_autofree char *msg =
+              g_strdup_printf ("Invalid text encoding for “%s”", display_name);
+
+            adw_toast_overlay_add_toast (self->toast_overlay, adw_toast_new (msg));
             return;
           }
 
