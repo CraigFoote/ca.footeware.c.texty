@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="TextyWindow" parent="AdwApplicationWindow">
+    <property name="default-width">1000</property>
+    <property name="default-height">600</property>
+    <property name="title">texty</property>
+    <style>
+      <class name="devel"/>
+    </style>
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
+            <child type="start">
+              <object class="AdwSplitButton" id="save_button">
+                <property name="action-name">win.save</property>
+                <property name="label" translatable="yes">Save</property>
+                <property name="tooltip-text" translatable="yes">Save document</property>
+                <property name="menu-model">action_menu</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkMenuButton">
+                <property name="primary">false</property>
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Menu</property>
+                <property name="menu-model">hamburger_menu</property>
+              </object>
+           </child>
+              <child type="end">
+                <object class="GtkLabel" id="cursor_pos">
+                  <property name="label">Ln 0, Col 0</property>
+                  <style>
+                    <class name="dim-label"/>
+                    <class name="numeric"/>
+                  </style>
+                </object>
+              </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="hexpand">true</property>
+            <property name="vexpand">true</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="child">
+              <object class="GtkTextView" id="main_text_view">
+                <property name="monospace">true</property>
+                <property name="input-hints">GTK_INPUT_HINT_SPELLCHECK</property>
+              </object>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+  <menu id="action_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_New</attribute>
+        <attribute name="action">win.new</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Open</attribute>
+        <attribute name="action">win.open</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Save _As</attribute>
+        <attribute name="action">win.save-as</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="hamburger_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
+        <attribute name="action">win.show-help-overlay</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_About Texty</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
+

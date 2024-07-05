@@ -1,0 +1,8 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+data/ca.footeware.c.texty.desktop.in
+data/ca.footeware.c.texty.metainfo.xml.in
+data/ca.footeware.c.texty.gschema.xml
+src/main.c
+src/texty-window.c
+src/texty-window.ui

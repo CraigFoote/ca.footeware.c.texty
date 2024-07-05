@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   width="128.00024"
+   height="127.99976"
+   viewBox="0 0 3.8400073 3.8399929"
+   id="edit-alt-5"
+   data-name="Flat Color"
+   class="icon flat-color"
+   version="1.1"
+   sodipodi:docname="pencil.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.3875"
+     inkscape:cx="338.01802"
+     inkscape:cy="334.41441"
+     inkscape:window-width="2304"
+     inkscape:window-height="1355"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="edit-alt-5" />
+  <path
+     id="secondary"
+     d="m 3.583942,0.25153019 a 0.7601107,0.76101775 0 0 0 -1.0755566,0 l -0.4693683,0.4699285 a 0.19002768,0.19025444 0 0 0 0,0.2701613 L 2.8447343,1.7982988 a 0.19002768,0.19025444 0 0 0 0.2698394,0 L 3.583942,1.337883 a 0.7601107,0.76101775 0 0 0 0,-1.08635281 z"
+     style="fill:#2ca9bc;stroke:#808080;stroke-width:0.0570423;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     id="primary"
+     d="M 2.5786955,2.064655 1.7729783,1.2579762 a 0.19002768,0.19025444 0 0 0 -0.2698393,0 L 0.08363233,2.6791769 a 0.19002768,0.19025444 0 0 0 -0.055108,0.1350807 v 0.8066787 a 0.19002768,0.19025444 0 0 0 0.1900277,0.1902545 H 1.0242693 a 0.19002768,0.19025444 0 0 0 0.144421,-0.055174 L 2.588197,2.3348163 A 0.19002768,0.19025444 0 0 0 2.578697,2.064655 Z"
+     style="fill:#000000;stroke:#808080;stroke-width:0.0570423;stroke-dasharray:none;stroke-opacity:1" />
+</svg>

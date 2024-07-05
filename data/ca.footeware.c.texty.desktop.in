@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=texty
+Exec=texty
+Icon=ca.footeware.c.texty
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=GTK;
+StartupNotify=true
