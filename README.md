@@ -1,3 +1,3 @@
 # texty
 
-A description of this project.
+A minimal text editor cobbled together from different tutorials.
