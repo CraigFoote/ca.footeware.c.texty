@@ -24,11 +24,11 @@
 
 struct _TextyWindow
 {
-	AdwApplicationWindow  parent_instance;
+        AdwApplicationWindow  parent_instance;
 
-	/* Template widgets */
-	AdwHeaderBar    *header_bar;
-	GtkTextView     *main_text_view;
+        /* Template widgets */
+        AdwHeaderBar    *header_bar;
+        GtkTextView     *main_text_view;
         GtkButton       *save_button;
         GtkLabel        *cursor_pos;
         AdwToastOverlay *toast_overlay;
@@ -43,11 +43,11 @@ GFile *file;
 static void
 texty_window_class_init (TextyWindowClass *klass)
 {
-	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+        GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-	gtk_widget_class_set_template_from_resource (widget_class, "/ca/footeware/c/texty/texty-window.ui");
-	gtk_widget_class_bind_template_child (widget_class, TextyWindow, header_bar);
-	gtk_widget_class_bind_template_child (widget_class, TextyWindow, main_text_view);
+        gtk_widget_class_set_template_from_resource (widget_class, "/ca/footeware/c/texty/texty-window.ui");
+        gtk_widget_class_bind_template_child (widget_class, TextyWindow, header_bar);
+        gtk_widget_class_bind_template_child (widget_class, TextyWindow, main_text_view);
         gtk_widget_class_bind_template_child (widget_class, TextyWindow, save_button);
         gtk_widget_class_bind_template_child (widget_class, TextyWindow, cursor_pos);
         gtk_widget_class_bind_template_child (widget_class, TextyWindow, toast_overlay);
@@ -62,7 +62,7 @@ texty_window_init (TextyWindow *self)
         g_autoptr (GSimpleAction) save_as_action;
         GtkTextBuffer *buffer;
 
-  	gtk_widget_init_template (GTK_WIDGET (self));
+          gtk_widget_init_template (GTK_WIDGET (self));
 
         // save
         save_action = g_simple_action_new ("save", NULL);
@@ -128,48 +128,48 @@ on_save_response (GObject      *source,
                   GAsyncResult *result,
                   gpointer      user_data)
 {
-      GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
-      TextyWindow *self = user_data;
+        GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
+        TextyWindow *self = user_data;
 
-      file = gtk_file_dialog_save_finish (dialog, result, NULL);
+        file = gtk_file_dialog_save_finish (dialog, result, NULL);
 
-      if (file != NULL)
-        save_file (self);
+        if (file != NULL)
+          save_file (self);
 }
 
 static void
 save_file (TextyWindow *self)
  {
-   GtkTextIter end;
-   char *text;
-   g_autoptr(GBytes) bytes;
+        GtkTextIter end;
+        char *text;
+        g_autoptr(GBytes) bytes;
 
-   GtkTextBuffer *buffer = gtk_text_view_get_buffer (self->main_text_view);
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer (self->main_text_view);
 
-   // Retrieve the iterator at the start of the buffer
-   GtkTextIter start;
-   gtk_text_buffer_get_start_iter (buffer, &start);
+        // Retrieve the iterator at the start of the buffer
+        GtkTextIter start;
+        gtk_text_buffer_get_start_iter (buffer, &start);
 
-   gtk_text_buffer_get_end_iter (buffer, &end);
+        gtk_text_buffer_get_end_iter (buffer, &end);
 
-   // Retrieve all the visible text between the two bounds
-   text = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+        // Retrieve all the visible text between the two bounds
+        text = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 
-   // If there is nothing to save, return early
-   if (text == NULL)
-     return;
+        // If there is nothing to save, return early
+        if (text == NULL)
+         return;
 
-   bytes = g_bytes_new_take (text, strlen (text));
+        bytes = g_bytes_new_take (text, strlen (text));
 
-   // Start the asynchronous operation to save the data into the file
-   g_file_replace_contents_bytes_async (file,
-                                        bytes,
-                                        NULL,
-                                        FALSE,
-                                        G_FILE_CREATE_NONE,
-                                        NULL,
-                                        save_file_complete,
-                                        self);
+        // Start the asynchronous operation to save the data into the file
+        g_file_replace_contents_bytes_async (file,
+                                            bytes,
+                                            NULL,
+                                            FALSE,
+                                            G_FILE_CREATE_NONE,
+                                            NULL,
+                                            save_file_complete,
+                                            self);
 }
 
 static void
@@ -177,50 +177,50 @@ save_file_complete (GObject      *source_object,
                     GAsyncResult *result,
                     gpointer      user_data)
 {
-  g_autofree char *display_name;
-  g_autoptr (GFileInfo) info;
-  g_autofree char *msg;
-  TextyWindow *self;
+        g_autofree char *display_name;
+        g_autoptr (GFileInfo) info;
+        g_autofree char *msg;
+        TextyWindow *self;
 
-  g_autoptr (GError) error =  NULL;
-  g_file_replace_contents_finish (file, result, NULL, &error);
+        g_autoptr (GError) error =  NULL;
+        g_file_replace_contents_finish (file, result, NULL, &error);
 
-  // Query the display name for the file
-  display_name = NULL;
-  info = g_file_query_info (file,
-                     "standard::display-name",
-                     G_FILE_QUERY_INFO_NONE,
-                     NULL,
-                     NULL);
-  if (info != NULL)
-    {
-      display_name =
-        g_strdup (g_file_info_get_attribute_string (info, "standard::display-name"));
-    }
-  else
-    {
-      display_name = g_file_get_basename (file);
-    }
+        // Query the display name for the file
+        display_name = NULL;
+        info = g_file_query_info (file,
+                           "standard::display-name",
+                           G_FILE_QUERY_INFO_NONE,
+                           NULL,
+                           NULL);
+        if (info != NULL)
+          {
+            display_name =
+              g_strdup (g_file_info_get_attribute_string (info, "standard::display-name"));
+          }
+        else
+          {
+            display_name = g_file_get_basename (file);
+          }
 
-    msg = NULL;
-    if (error != NULL)
-      msg = g_strdup_printf ("Unable to save as “%s”", display_name);
-    else
-      msg = g_strdup_printf ("Saved as “%s”", display_name);
+          msg = NULL;
+          if (error != NULL)
+            msg = g_strdup_printf ("Unable to save as “%s”", display_name);
+          else
+            msg = g_strdup_printf ("Saved as “%s”", display_name);
 
-    self = TEXTY_WINDOW (user_data);
-    adw_toast_overlay_add_toast (self->toast_overlay, adw_toast_new (msg));
+          self = TEXTY_WINDOW (user_data);
+          adw_toast_overlay_add_toast (self->toast_overlay, adw_toast_new (msg));
 }
 
 // new file
 static void
 text_viewer_window__new_file (TextyWindow *self)
 {
-  g_print ("window new file\n");
-  if (file != NULL)
-    {
-      save_file (self);
-    }
+        g_print ("window new file\n");
+
+        // check if text buffer has been changed = listen for event?
+        if (file != NULL)
+            save_file (self);
 }
 
 // open file
@@ -256,10 +256,10 @@ on_open_response (GObject      *source,
 static void
 open_file (TextyWindow *self)
 {
-          g_file_load_contents_async (file,
-                                      NULL,
-                                      (GAsyncReadyCallback) open_file_complete,
-                                      self);
+        g_file_load_contents_async (file,
+                                    NULL,
+                                    (GAsyncReadyCallback) open_file_complete,
+                                    self);
 }
 
 static void

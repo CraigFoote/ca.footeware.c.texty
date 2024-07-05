@@ -55,9 +55,9 @@ text_viewer_window__new_file (TextyWindow *self);
 
 // open file
 static void
-text_viewer_window__open_file (GAction          *action,
-                               GVariant         *parameter,
-                               TextyWindow      *self);
+text_viewer_window__open_file (GAction      *action,
+                               GVariant     *parameter,
+                               TextyWindow  *self);
 
 static void
 on_open_response (GObject      *source,
@@ -79,6 +79,6 @@ text_viewer_window__save_as_file (void);
 // cursor position
 static void
 text_viewer_window__update_cursor_position (GtkTextBuffer *buffer,
-                                            GParamSpec *pspec,
-                                            TextyWindow *self);
+                                            GParamSpec    *pspec,
+                                            TextyWindow   *self);
 
