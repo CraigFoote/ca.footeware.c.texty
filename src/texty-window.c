@@ -37,6 +37,9 @@ struct _TextyWindow
 G_DEFINE_FINAL_TYPE (TextyWindow, texty_window, ADW_TYPE_APPLICATION_WINDOW)
 
 // init
+
+GFile *file;
+
 static void
 texty_window_class_init (TextyWindowClass *klass)
 {
@@ -128,16 +131,14 @@ on_save_response (GObject      *source,
       GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
       TextyWindow *self = user_data;
 
-      g_autoptr (GFile) file =
-        gtk_file_dialog_save_finish (dialog, result, NULL);
+      file = gtk_file_dialog_save_finish (dialog, result, NULL);
 
       if (file != NULL)
-        save_file (self, file);
+        save_file (self);
 }
 
 static void
-save_file (TextyWindow *self,
-           GFile       *file)
+save_file (TextyWindow *self)
  {
    GtkTextIter end;
    char *text;
@@ -181,8 +182,6 @@ save_file_complete (GObject      *source_object,
   g_autofree char *msg;
   TextyWindow *self;
 
-  GFile *file = G_FILE (source_object);
-
   g_autoptr (GError) error =  NULL;
   g_file_replace_contents_finish (file, result, NULL, &error);
 
@@ -215,9 +214,13 @@ save_file_complete (GObject      *source_object,
 
 // new file
 static void
-text_viewer_window__new_file (void)
+text_viewer_window__new_file (TextyWindow *self)
 {
   g_print ("window new file\n");
+  if (file != NULL)
+    {
+      save_file (self);
+    }
 }
 
 // open file
@@ -243,18 +246,15 @@ on_open_response (GObject      *source,
         GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
         TextyWindow *self = user_data;
 
-        g_autoptr (GFile) file = gtk_file_dialog_open_finish (dialog,
-                                                              result,
-                                                              NULL);
+        file = gtk_file_dialog_open_finish (dialog, result, NULL);
 
         // If the user selected a file, open it
         if (file != NULL)
-          open_file (self, file);
+          open_file (self);
 }
 
 static void
-open_file (TextyWindow *self,
-           GFile       *file)
+open_file (TextyWindow *self)
 {
           g_file_load_contents_async (file,
                                       NULL,
@@ -271,13 +271,14 @@ open_file_complete (GObject          *source_object,
         GtkTextIter start;
         g_autofree char *display_name;
         g_autoptr (GFileInfo) info;
+        g_autofree char *contents;
+        gsize length;
+        g_autoptr (GError) error;
 
-        GFile *file = G_FILE (source_object);
+        contents = NULL;
+        length = 0;
 
-        g_autofree char *contents = NULL;
-        gsize length = 0;
-
-        g_autoptr (GError) error = NULL;
+        error = NULL;
 
         // Complete the asynchronous operation; this function will either
         // give you the contents of the file as a byte array, or will
