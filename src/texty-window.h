@@ -31,53 +31,53 @@ G_DECLARE_FINAL_TYPE (TextyWindow, texty_window, TEXTY, WINDOW, AdwApplicationWi
 G_END_DECLS
 
 // save file
-void
+static void
 text_viewer_window__save_file (GAction     *action G_GNUC_UNUSED,
                                GVariant    *param G_GNUC_UNUSED,
                                TextyWindow *self);
 
-void
+static void
 on_save_response (GObject      *source,
                   GAsyncResult *result,
                   gpointer      user_data);
 
-void
+static void
 save_file (TextyWindow *self);
 
-void
+static void
 save_file_complete (GObject      *source_object,
                     GAsyncResult *result,
                     gpointer      user_data);
 
 // new file
-void
+static void
 text_viewer_window__new_file (TextyWindow *self);
 
 // open file
-void
+static void
 text_viewer_window__open_file (GAction      *action,
                                GVariant     *parameter,
                                TextyWindow  *self);
 
-void
+static void
 on_open_response (GObject      *source,
                   GAsyncResult *result,
                   gpointer      user_data);
 
-void
+static void
 open_file (TextyWindow *self);
 
-void
+static void
 open_file_complete (GObject       *source_object,
                     GAsyncResult  *result,
                     TextyWindow   *self);
 
-// save-as file
-void
+// save as file
+static void
 text_viewer_window__save_as_file (void);
 
 // cursor position
-void
+static void
 text_viewer_window__update_cursor_position (GtkTextBuffer *buffer,
                                             GParamSpec    *pspec,
                                             TextyWindow   *self);
