@@ -42,7 +42,8 @@ on_save_response (GObject      *source,
                   gpointer      user_data);
 
 static void
-save_file (TextyWindow *self);
+save_file (TextyWindow *self,
+            GFile      *file);
 
 static void
 save_file_complete (GObject      *source_object,
@@ -51,7 +52,7 @@ save_file_complete (GObject      *source_object,
 
 // new file
 static void
-text_viewer_window__new_file (TextyWindow *self);
+text_viewer_window__new_file (void);
 
 // open file
 static void
@@ -65,7 +66,8 @@ on_open_response (GObject      *source,
                   gpointer      user_data);
 
 static void
-open_file (TextyWindow *self);
+open_file (TextyWindow *self,
+           GFile       *file);
 
 static void
 open_file_complete (GObject       *source_object,
