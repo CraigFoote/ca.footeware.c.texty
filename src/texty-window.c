@@ -128,20 +128,11 @@ on_save_response (GObject      *source,
         GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
         TextyWindow *self = user_data;
 
-<<<<<<< Upstream, based on origin/master
-        file = gtk_file_dialog_save_finish (dialog, result, NULL);
-=======
       g_autoptr (GFile) file =
         gtk_file_dialog_save_finish (dialog, result, NULL);
->>>>>>> 206219f Revert "global scope file variable"
 
-<<<<<<< Upstream, based on origin/master
         if (file != NULL)
           save_file (self);
-=======
-      if (file != NULL)
-        save_file (self, file);
->>>>>>> 206219f Revert "global scope file variable"
 }
 
 static void
@@ -190,15 +181,8 @@ save_file_complete (GObject      *source_object,
         g_autofree char *msg;
         TextyWindow *self;
 
-<<<<<<< Upstream, based on origin/master
         g_autoptr (GError) error =  NULL;
         g_file_replace_contents_finish (file, result, NULL, &error);
-=======
-  GFile *file = G_FILE (source_object);
-
-  g_autoptr (GError) error =  NULL;
-  g_file_replace_contents_finish (file, result, NULL, &error);
->>>>>>> 206219f Revert "global scope file variable"
 
         // Query the display name for the file
         display_name = NULL;
@@ -231,15 +215,12 @@ save_file_complete (GObject      *source_object,
 static void
 text_viewer_window__new_file (void)
 {
-<<<<<<< Upstream, based on origin/master
-        g_print ("window new file\n");
+
+  g_print ("window new file\n");
 
         // check if text buffer has been changed = listen for event?
         if (file != NULL)
             save_file (self);
-=======
-  g_print ("window new file\n");
->>>>>>> 206219f Revert "global scope file variable"
 }
 
 // open file
