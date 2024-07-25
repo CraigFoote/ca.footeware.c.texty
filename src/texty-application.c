@@ -120,11 +120,11 @@ texty_application_init (TextyApplication *self)
 	                                       "app.quit",
 	                                       (const char *[]) { "<primary>q", NULL });
         gtk_application_set_accels_for_action (GTK_APPLICATION (self),
-                                         "win.save",
-                                         (const char *[]) {
-                                           "<Ctrl>s",
-                                           NULL,
-                                         });
+                                               "win.save",
+                                               (const char *[]) {
+                                                  "<Ctrl>s",
+                                                  NULL,
+                                               });
         gtk_application_set_accels_for_action (GTK_APPLICATION (self),
                                                "win.open",
                                                (const char *[]) {
@@ -132,15 +132,15 @@ texty_application_init (TextyApplication *self)
                                                  NULL,
                                                });
         gtk_application_set_accels_for_action (GTK_APPLICATION (self),
-                                         "win.new",
-                                         (const char *[]) {
-                                           "<Ctrl>n",
-                                           NULL,
-                                         });
+                                               "win.new",
+                                               (const char *[]) {
+                                                 "<Ctrl>n",
+                                                 NULL,
+                                               });
         gtk_application_set_accels_for_action (GTK_APPLICATION (self),
-                                         "win.save-as",
-                                         (const char *[]) {
-                                           "<Ctrl><Shift>s",
-                                           NULL,
-                                         });
+                                               "win.save-as",
+                                               (const char *[]) {
+                                                 "<Ctrl><Shift>s",
+                                                 NULL,
+                                               });
 }
