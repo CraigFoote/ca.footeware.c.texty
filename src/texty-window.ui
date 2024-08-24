@@ -5,10 +5,7 @@
   <template class="TextyWindow" parent="AdwApplicationWindow">
     <property name="default-width">1000</property>
     <property name="default-height">600</property>
-    <property name="title">texty</property>
-    <style>
-      <class name="devel"/>
-    </style>
+    <property name="title">Texty</property>
     <property name="content">
       <object class="AdwToolbarView">
         <child type="top">
@@ -51,7 +48,7 @@
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
                 <property name="child">
-                  <object class="GtkTextView" id="main_text_view">
+                  <object class="GtkTextView" id="text_view">
                     <property name="monospace">true</property>
                    <property name="input-hints">GTK_INPUT_HINT_SPELLCHECK</property>
                   </object>
