@@ -1,6 +1,6 @@
 /* texty-application.c
  *
- * Copyright 2024 Craig
+ * Copyright 2024 Craig Foote
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,10 @@ texty_application_about_action (GSimpleAction *action,
                                 GVariant      *parameter,
                                 gpointer       user_data)
 {
-  static const char *developers[] = {"Footeware.ca", NULL};
+  static const char *developers[] = {
+    "Footeware.ca http://Footeware.ca",
+    NULL
+  };
   TextyApplication *self = user_data;
   GtkWindow *window = NULL;
 
@@ -86,7 +89,7 @@ texty_application_about_action (GSimpleAction *action,
                          "application-icon", "ca.footeware.c.texty",
                          "developer-name", "Another fine mess by Footeware.ca",
                          "translator-credits", _("translator-credits"),
-                         "version", "0.1.0",
+                         "version", "1.0.0",
                          "developers", developers,
                          "copyright", "© 2024 Craig Foote",
                          NULL);
