@@ -1,7 +1,7 @@
 {
     "id" : "ca.footeware.c.texty",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "master",
+    "runtime-version" : "46",
     "sdk" : "org.gnome.Sdk",
     "command" : "texty",
     "finish-args" : [

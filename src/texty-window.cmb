@@ -15,9 +15,8 @@
 	(1,4,"AdwSplitButton","save_button",3,None,"start",None,None,None,None),
 	(1,5,"GtkMenuButton",None,3,None,"end",None,1,None,None),
 	(1,6,"GtkLabel","cursor_pos",3,None,"end",None,2,None,None),
-	(1,7,"AdwToastOverlay","toast_overlay",2,None,None,None,1,None,None),
-	(1,8,"GtkScrolledWindow",None,7,None,None,None,None,None,None),
-	(1,9,"GtkTextView","main_text_view",8,None,None,None,None,None,None),
+	(1,7,"AdwToastOverlay","toast_overlay",2,None,"top",None,1,None,None),
+	(1,8,"GtkScrolledWindow","main_text_view",7,None,None,None,None,None,None),
 	(1,10,"(menu)","action_menu",None,None,None,None,None,None,None),
 	(1,11,"(section)",None,10,None,None,None,None,None,None),
 	(1,12,"(item)",None,11,None,None,None,None,None,None),
@@ -26,7 +25,8 @@
 	(1,15,"(menu)","hamburger_menu",None,None,None,None,None,None,None),
 	(1,16,"(section)",None,15,None,None,None,None,None,None),
 	(1,17,"(item)",None,16,None,None,None,None,None,None),
-	(1,18,"(item)",None,16,None,None,None,1,None,None)
+	(1,18,"(item)",None,16,None,None,None,1,None,None),
+	(1,19,"GtkTextView",None,8,None,None,None,-1,None,None)
   </object>
   <object_property>
 	(1,1,"AdwApplicationWindow","content",None,None,None,None,None,2,None,None,None,None),
@@ -44,15 +44,13 @@
 	(1,5,"GtkWidget","tooltip-text","Menu",1,None,None,None,None,None,None,None,None),
 	(1,6,"GtkLabel","label","Ln 0, Col 0",None,None,None,None,None,None,None,None,None),
 	(1,7,"AdwToastOverlay","child",None,None,None,None,None,8,None,None,None,None),
-	(1,8,"GtkScrolledWindow","child",None,None,None,None,None,9,None,None,None,None),
+	(1,8,"GtkScrolledWindow","child",None,None,None,None,None,19,None,None,None,None),
 	(1,8,"GtkWidget","hexpand","true",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","margin-bottom","6",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","margin-end","6",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","margin-start","6",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","margin-top","6",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","vexpand","true",None,None,None,None,None,None,None,None,None),
-	(1,9,"GtkTextView","input-hints","GTK_INPUT_HINT_SPELLCHECK",None,None,None,None,None,None,None,None,None),
-	(1,9,"GtkTextView","monospace","true",None,None,None,None,None,None,None,None,None),
 	(1,12,"(item)","action","win.new",None,None,None,None,None,None,None,None,None),
 	(1,12,"(item)","label","_New",1,None,None,None,None,None,None,None,None),
 	(1,13,"(item)","action","win.open",None,None,None,None,None,None,None,None,None),

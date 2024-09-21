@@ -744,4 +744,3 @@ texty_window_init (TextyWindow *self)
          GTK_STYLE_PROVIDER(cssProvider),
          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 }
-
