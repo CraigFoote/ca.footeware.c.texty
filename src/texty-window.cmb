@@ -13,8 +13,8 @@
 	(1,2,"AdwToolbarView",None,1,None,None,None,None,None,None),
 	(1,3,"AdwHeaderBar","header_bar",2,None,"top",None,None,None,None),
 	(1,4,"AdwSplitButton","save_button",3,None,"start",None,None,None,None),
-	(1,5,"GtkMenuButton",None,3,None,"end",None,1,None,None),
-	(1,6,"GtkLabel","cursor_pos",3,None,"end",None,2,None,None),
+	(1,5,"GtkMenuButton","hamburger",3,None,"end",None,1,None,None),
+	(1,6,"GtkLabel","cursor_pos",3,None,"end",None,3,None,None),
 	(1,7,"AdwToastOverlay","toast_overlay",2,None,"top",None,1,None,None),
 	(1,8,"GtkScrolledWindow","main_text_view",7,None,None,None,None,None,None),
 	(1,10,"(menu)","action_menu",None,None,None,None,None,None,None),
@@ -26,7 +26,8 @@
 	(1,16,"(section)",None,15,None,None,None,None,None,None),
 	(1,17,"(item)",None,16,None,None,None,None,None,None),
 	(1,18,"(item)",None,16,None,None,None,1,None,None),
-	(1,19,"GtkTextView",None,8,None,None,None,-1,None,None)
+	(1,20,"GtkToggleButton","text-wrap",3,None,"end",None,2,None,None),
+	(1,21,"GtkTextView",None,8,None,None,None,-1,None,None)
   </object>
   <object_property>
 	(1,1,"AdwApplicationWindow","content",None,None,None,None,None,2,None,None,None,None),
@@ -44,7 +45,7 @@
 	(1,5,"GtkWidget","tooltip-text","Menu",1,None,None,None,None,None,None,None,None),
 	(1,6,"GtkLabel","label","Ln 0, Col 0",None,None,None,None,None,None,None,None,None),
 	(1,7,"AdwToastOverlay","child",None,None,None,None,None,8,None,None,None,None),
-	(1,8,"GtkScrolledWindow","child",None,None,None,None,None,19,None,None,None,None),
+	(1,8,"GtkScrolledWindow","child",None,None,None,None,None,21,None,None,None,None),
 	(1,8,"GtkWidget","hexpand","true",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","margin-bottom","6",None,None,None,None,None,None,None,None,None),
 	(1,8,"GtkWidget","margin-end","6",None,None,None,None,None,None,None,None,None),
@@ -60,7 +61,13 @@
 	(1,17,"(item)","action","win.show-help-overlay",None,None,None,None,None,None,None,None,None),
 	(1,17,"(item)","label","_Keyboard Shortcuts",1,None,None,None,None,None,None,None,None),
 	(1,18,"(item)","action","app.about",None,None,None,None,None,None,None,None,None),
-	(1,18,"(item)","label","_About Texty",1,None,None,None,None,None,None,None,None)
+	(1,18,"(item)","label","_About Texty",1,None,None,None,None,None,None,None,None),
+	(1,20,"GtkActionable","action-name","win.text-wrap",None,None,None,None,None,None,None,None,None),
+	(1,20,"GtkButton","icon-name","ca.footeware.c.texty.line-wrapping-symbolic",None,None,None,None,None,None,None,None,None),
+	(1,20,"GtkToggleButton","active","True",None,None,None,None,None,None,None,None,None),
+	(1,20,"GtkWidget","focusable","True",None,None,None,None,None,None,None,None,None),
+	(1,20,"GtkWidget","has-tooltip","True",None,None,None,None,None,None,None,None,None),
+	(1,20,"GtkWidget","tooltip-text","Wrap text",None,None,None,None,None,None,None,None,None)
   </object_property>
   <object_data>
 	(1,1,"GtkWidget",1,1,None,None,None,None,None,None),

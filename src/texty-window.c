@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-
 #include "texty-window.h"
 
 struct _TextyWindow
@@ -32,6 +31,7 @@ struct _TextyWindow
   GtkButton       *save_button;
   GtkLabel        *cursor_pos;
   AdwToastOverlay *toast_overlay;
+  GtkToggleButton *wrap_text_button;
 
   /* instance variable */
   GFile *file;
@@ -658,6 +658,24 @@ text_viewer_window__update_cursor_position (GtkTextBuffer *buffer,
 /**********************************/
 
 static void
+toggle_wrap_text (GtkToggleButton *button,
+                  TextyWindow     *self)
+{
+  gboolean state = gtk_toggle_button_get_active(button);
+  if (state) {
+        gtk_text_view_set_wrap_mode(self->text_view, GTK_WRAP_WORD);
+        gtk_toggle_button_set_active(button, true);
+    } else {
+        gtk_text_view_set_wrap_mode(self->text_view, GTK_WRAP_NONE);
+        gtk_toggle_button_set_active(button, false);
+    }
+}
+
+/**********************************/
+/* Toggle wrap text 👆️             */
+/***********************************/
+
+static void
 texty_window_class_init (TextyWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -679,6 +697,9 @@ texty_window_class_init (TextyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class,
                                         TextyWindow,
                                         toast_overlay);
+  gtk_widget_class_bind_template_child (widget_class,
+                                        TextyWindow,
+                                        wrap_text_button);
 }
 
 static void
@@ -688,6 +709,7 @@ texty_window_init (TextyWindow *self)
   g_autoptr (GSimpleAction) new_action;
   g_autoptr (GSimpleAction) open_action;
   g_autoptr (GSimpleAction) save_as_action;
+  GtkIconTheme *icon_theme;
   GtkTextBuffer *buffer;
   GtkCssProvider *cssProvider;
 
@@ -729,6 +751,13 @@ texty_window_init (TextyWindow *self)
   g_action_map_add_action (G_ACTION_MAP (self),
                            G_ACTION (save_as_action));
 
+  /* wrap text */
+  g_signal_connect (self->wrap_text_button,
+                    "toggled",
+                    G_CALLBACK (toggle_wrap_text),
+                    self);
+
+  /* cursor position */
   buffer = gtk_text_view_get_buffer (self->text_view);
   g_signal_connect (buffer,
                     "notify::cursor-position",
@@ -737,10 +766,16 @@ texty_window_init (TextyWindow *self)
 
   /* apply CSS */
   cssProvider = gtk_css_provider_new();
-  gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "lg-font");
   gtk_css_provider_load_from_resource (cssProvider, "/ca/footeware/c/texty/main.css");
   gtk_style_context_add_provider_for_display(
          gdk_display_get_default(),
          GTK_STYLE_PROVIDER(cssProvider),
          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "lg-font");
+  gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "padded");
+
+  /* symbolic icon */
+  icon_theme = gtk_icon_theme_get_for_display (gdk_display_get_default ());
+  gtk_icon_theme_add_search_path (icon_theme,
+                                  "/ca/footeware/c/texty/data/icons/hicolor/scalable/actions");
 }
