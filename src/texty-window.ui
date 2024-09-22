@@ -11,7 +11,7 @@
     <property name="default-width">1000</property>
     <property name="title">texty</property>
     <style>
-      <class name="devel"/>
+      <!-- <class name="devel"/> -->
     </style>
     <property name="content">
       <object class="AdwToolbarView">
@@ -28,7 +28,8 @@
                 <property name="child">
                   <object class="GtkTextView" id="text_view">
                     <property name="monospace">true</property>
-                   <property name="input-hints">GTK_INPUT_HINT_SPELLCHECK</property>
+                    <property name="wrap-mode">GTK_WRAP_NONE</property>
+                    <property name="input-hints">GTK_INPUT_HINT_SPELLCHECK</property>
                   </object>
                 </property>
               </object>
@@ -51,6 +52,25 @@
                 <property name="menu-model">hamburger_menu</property>
                 <property name="primary">false</property>
                 <property name="tooltip-text" translatable="yes">Menu</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkToggleButton" id="wrap_text_button">
+                <property name="visible">true</property>
+                <property name="sensitive">true</property>
+                <property name="tooltip-text" translatable="yes">Wrap text</property>
+                <property name="visible">true</property>
+                <property name="can_focus">true</property>
+                <property name="receives_default">true</property>
+                <style>
+                  <class name="image-button"/>
+                </style>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">true</property>
+                    <property name="icon-name">ca.footeware.c.texty.line-wrapping-symbolic</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child type="end">

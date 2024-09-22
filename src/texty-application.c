@@ -89,7 +89,7 @@ texty_application_about_action (GSimpleAction *action,
                          "application-icon", "ca.footeware.c.texty",
                          "developer-name", "Another fine mess by Footeware.ca",
                          "translator-credits", _("translator-credits"),
-                         "version", "1.0.1",
+                         "version", "1.1.0",
                          "developers", developers,
                          "copyright", "© 2024 Craig Foote",
                          NULL);
