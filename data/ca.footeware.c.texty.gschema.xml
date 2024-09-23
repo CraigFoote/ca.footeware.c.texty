@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="texty">
 	<schema id="ca.footeware.c.texty" path="/ca/footeware/c/texty/">
+	  <key name="text-wrap" type="b">
+        <default>false</default>
+        <summary>Whether or not text is wrapped.</summary>
+        <description>A boolean value describing whether or not to wrap the entered text.</description>
+      </key>
 	</schema>
 </schemalist>
