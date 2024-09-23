@@ -89,9 +89,9 @@ texty_application_about_action (GSimpleAction *action,
                          "application-icon", "ca.footeware.c.texty",
                          "developer-name", "Another fine mess by Footeware.ca",
                          "translator-credits", _("translator-credits"),
-                         "version", "1.1.0",
+                         "version", "1.2.0",
                          "developers", developers,
-                         "copyright", "© 2024 Craig Foote",
+                         "copyright", "©2024 Craig Foote",
                          NULL);
 }
 
@@ -109,19 +109,22 @@ texty_application_quit_action (GSimpleAction *action,
 
 static const GActionEntry app_actions[] = {
   { "quit", texty_application_quit_action },
-  { "about", texty_application_about_action },
+  { "about", texty_application_about_action }
 };
 
 static void
 texty_application_init (TextyApplication *self)
 {
   g_action_map_add_action_entries (G_ACTION_MAP (self),
-                             app_actions,
-                             G_N_ELEMENTS (app_actions),
-                             self);
+                                   app_actions,
+                                   G_N_ELEMENTS (app_actions),
+                                   self);
   gtk_application_set_accels_for_action (GTK_APPLICATION (self),
-                                   "app.quit",
-                                   (const char *[]) { "<primary>q", NULL });
+                                         "app.quit",
+                                         (const char *[]) {
+                                            "<primary>q",
+                                            NULL
+                                         });
   gtk_application_set_accels_for_action (GTK_APPLICATION (self),
                                          "win.save",
                                          (const char *[]) {
@@ -144,6 +147,12 @@ texty_application_init (TextyApplication *self)
                                          "win.save-as",
                                          (const char *[]) {
                                            "<Ctrl><Shift>s",
+                                           NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "win.toggle-text-wrap",
+                                         (const char *[]) {
+                                           "<Ctrl><Shift>w",
                                            NULL,
                                          });
 }
