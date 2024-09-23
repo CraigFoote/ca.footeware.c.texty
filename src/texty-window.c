@@ -31,7 +31,6 @@ struct _TextyWindow
   GtkButton       *save_button;
   GtkLabel        *cursor_pos;
   AdwToastOverlay *toast_overlay;
-  GtkToggleButton *wrap_text_button;
 
   /* instance variable */
   GFile *file;
@@ -143,9 +142,9 @@ on_save_response (GObject      *source,
 }
 
 static void
-text_viewer_window__save (GAction     *action G_GNUC_UNUSED,
-                          GVariant    *param G_GNUC_UNUSED,
-                          TextyWindow *self)
+texty_window__save (GAction     *action G_GNUC_UNUSED,
+                    GVariant    *param G_GNUC_UNUSED,
+                    TextyWindow *self)
 {
   /* check if we have a file yet */
   if (self->file != NULL )
@@ -298,9 +297,9 @@ on_save_modified_response(AdwAlertDialog *dialog,
 /**********************************/
 
 static void
-text_viewer_window__new (GAction     *action,
-                         GVariant    *parameter,
-                         TextyWindow *self)
+texty_window__new (GAction     *action,
+                   GVariant    *parameter,
+                   TextyWindow *self)
 {
   GtkTextBuffer *buffer;
   gboolean modified;
@@ -349,9 +348,9 @@ text_viewer_window__new (GAction     *action,
 /**********************************/
 
 static void
-open_file_complete (GObject          *source_object,
-                    GAsyncResult     *result,
-                    TextyWindow      *self)
+open_file_complete (GObject       *source_object,
+                    GAsyncResult  *result,
+                    TextyWindow   *self)
 {
   GtkTextBuffer *buffer;
   GtkTextIter start;
@@ -464,9 +463,9 @@ on_open_response (GObject      *source,
 }
 
 static void
-text_viewer_window__open (GAction     *action,
-                          GVariant    *parameter,
-                          TextyWindow *self)
+texty_window__open (GAction     *action,
+                    GVariant    *parameter,
+                    TextyWindow *self)
 {
   GtkTextBuffer *buffer;
   gboolean modified;
@@ -612,9 +611,9 @@ on_save_as_response(GObject      *source,
 }
 
 static void
-text_viewer_window__save_as (GAction     *action,
-                             GVariant    *parameter,
-                             TextyWindow *self)
+texty_window__save_as (GAction     *action,
+                       GVariant    *parameter,
+                       TextyWindow *self)
 {
   g_autoptr (GtkFileDialog) dialog = gtk_file_dialog_new ();
   /* present save file dialog */
@@ -630,9 +629,9 @@ text_viewer_window__save_as (GAction     *action,
 /**********************************/
 
 static void
-text_viewer_window__update_cursor_position (GtkTextBuffer *buffer,
-                                            GParamSpec *pspec,
-                                            TextyWindow *self)
+texty_window__update_cursor_position (GtkTextBuffer *buffer,
+                                      GParamSpec *pspec,
+                                      TextyWindow *self)
 {
   GtkTextIter iter;
   g_autofree char *cursor_str;
@@ -658,21 +657,27 @@ text_viewer_window__update_cursor_position (GtkTextBuffer *buffer,
 /**********************************/
 
 static void
-toggle_wrap_text (GtkToggleButton *button,
-                  TextyWindow     *self)
+texty_window__toggle_text_wrap (GSimpleAction *action,
+                                       GVariant      *parameter,
+                                       TextyWindow   *self)
 {
-  gboolean state = gtk_toggle_button_get_active(button);
-  if (state) {
-        gtk_text_view_set_wrap_mode(self->text_view, GTK_WRAP_WORD);
-        gtk_toggle_button_set_active(button, true);
-    } else {
-        gtk_text_view_set_wrap_mode(self->text_view, GTK_WRAP_NONE);
-        gtk_toggle_button_set_active(button, false);
-    }
+  GVariant *state;
+  gboolean current_state;
+
+  state = g_action_get_state (G_ACTION (action));
+  current_state = g_variant_get_boolean (state);
+  g_variant_unref (state);
+
+  current_state = !current_state;
+
+  gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(self->text_view),
+                               current_state ? GTK_WRAP_WORD : GTK_WRAP_NONE);
+
+  g_simple_action_set_state (action, g_variant_new_boolean (current_state));
 }
 
 /**********************************/
-/* Toggle wrap text 👆️             */
+/* Toggle text wrap 👆️             */
 /***********************************/
 
 static void
@@ -697,9 +702,6 @@ texty_window_class_init (TextyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class,
                                         TextyWindow,
                                         toast_overlay);
-  gtk_widget_class_bind_template_child (widget_class,
-                                        TextyWindow,
-                                        wrap_text_button);
 }
 
 static void
@@ -709,7 +711,7 @@ texty_window_init (TextyWindow *self)
   g_autoptr (GSimpleAction) new_action;
   g_autoptr (GSimpleAction) open_action;
   g_autoptr (GSimpleAction) save_as_action;
-  GtkIconTheme *icon_theme;
+  g_autoptr (GSimpleAction) toggle_text_wrap_action;
   GtkTextBuffer *buffer;
   GtkCssProvider *cssProvider;
 
@@ -719,7 +721,7 @@ texty_window_init (TextyWindow *self)
   save_action = g_simple_action_new ("save", NULL);
   g_signal_connect (save_action,
                     "activate",
-                    G_CALLBACK (text_viewer_window__save),
+                    G_CALLBACK (texty_window__save),
                     self);
   g_action_map_add_action (G_ACTION_MAP (self),
                            G_ACTION (save_action));
@@ -728,7 +730,7 @@ texty_window_init (TextyWindow *self)
   new_action = g_simple_action_new ("new", NULL);
   g_signal_connect (new_action,
                     "activate",
-                    G_CALLBACK (text_viewer_window__new),
+                    G_CALLBACK (texty_window__new),
                     self);
   g_action_map_add_action (G_ACTION_MAP (self),
                            G_ACTION (new_action));
@@ -737,7 +739,7 @@ texty_window_init (TextyWindow *self)
   open_action = g_simple_action_new ("open", NULL);
   g_signal_connect (open_action,
                     "activate",
-                    G_CALLBACK (text_viewer_window__open),
+                    G_CALLBACK (texty_window__open),
                     self);
   g_action_map_add_action (G_ACTION_MAP (self),
                            G_ACTION (open_action));
@@ -746,22 +748,27 @@ texty_window_init (TextyWindow *self)
   save_as_action = g_simple_action_new ("save-as", NULL);
   g_signal_connect (save_as_action,
                     "activate",
-                    G_CALLBACK (text_viewer_window__save_as),
+                    G_CALLBACK (texty_window__save_as),
                     self);
   g_action_map_add_action (G_ACTION_MAP (self),
                            G_ACTION (save_as_action));
 
   /* wrap text */
-  g_signal_connect (self->wrap_text_button,
-                    "toggled",
-                    G_CALLBACK (toggle_wrap_text),
+  toggle_text_wrap_action = g_simple_action_new_stateful ("toggle-text-wrap",
+                                                          NULL,
+                                                          g_variant_new_boolean (FALSE));
+  g_signal_connect (toggle_text_wrap_action,
+                    "activate",
+                    G_CALLBACK (texty_window__toggle_text_wrap),
                     self);
+   g_action_map_add_action(G_ACTION_MAP(self), G_ACTION(toggle_text_wrap_action));
+
 
   /* cursor position */
   buffer = gtk_text_view_get_buffer (self->text_view);
   g_signal_connect (buffer,
                     "notify::cursor-position",
-                    G_CALLBACK (text_viewer_window__update_cursor_position),
+                    G_CALLBACK (texty_window__update_cursor_position),
                     self);
 
   /* apply CSS */
@@ -773,9 +780,4 @@ texty_window_init (TextyWindow *self)
          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "lg-font");
   gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "padded");
-
-  /* symbolic icon */
-  icon_theme = gtk_icon_theme_get_for_display (gdk_display_get_default ());
-  gtk_icon_theme_add_search_path (icon_theme,
-                                  "/ca/footeware/c/texty/data/icons/hicolor/scalable/actions");
 }

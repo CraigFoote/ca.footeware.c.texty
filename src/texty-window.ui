@@ -55,25 +55,6 @@
               </object>
             </child>
             <child type="end">
-              <object class="GtkToggleButton" id="wrap_text_button">
-                <property name="visible">true</property>
-                <property name="sensitive">true</property>
-                <property name="tooltip-text" translatable="yes">Wrap text</property>
-                <property name="visible">true</property>
-                <property name="can_focus">true</property>
-                <property name="receives_default">true</property>
-                <style>
-                  <class name="image-button"/>
-                </style>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">true</property>
-                    <property name="icon-name">ca.footeware.c.texty.line-wrapping-symbolic</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child type="end">
               <object class="GtkLabel" id="cursor_pos">
                 <property name="label">Ln 0, Col 0</property>
                 <style>
@@ -104,6 +85,12 @@
     </section>
   </menu>
   <menu id="hamburger_menu">
+    <section>
+      <item>
+        <attribute name="action">win.toggle-text-wrap</attribute>
+        <attribute name="label" translatable="yes">_Wrap Text</attribute>
+      </item>
+    </section>
     <section>
       <item>
         <attribute name="action">win.show-help-overlay</attribute>
