@@ -38,6 +38,31 @@ struct _TextyWindow
 
 G_DEFINE_FINAL_TYPE (TextyWindow, texty_window, ADW_TYPE_APPLICATION_WINDOW)
 
+static void save_text_wrap(gboolean value)
+{
+  GSettings *settings;
+
+  settings = g_settings_new("ca.footeware.c.texty");
+  g_settings_set_boolean(settings, "text-wrap", value);
+  g_object_unref(settings);
+}
+
+static gboolean get_text_wrap (void)
+{
+  GSettings *settings;
+  gboolean value;
+
+  settings = g_settings_new("ca.footeware.c.texty");
+  value = g_settings_get_boolean(settings, "text-wrap");
+  g_object_unref(settings);
+
+  return value;
+}
+
+/**********************************/
+/* Preferences 👆️                 */
+/**********************************/
+
 static void
 save_file_complete (GObject      *source_object,
                     GAsyncResult *result,
@@ -674,11 +699,12 @@ texty_window__toggle_text_wrap (GSimpleAction *action,
                                current_state ? GTK_WRAP_WORD : GTK_WRAP_NONE);
 
   g_simple_action_set_state (action, g_variant_new_boolean (current_state));
+  save_text_wrap (current_state);
 }
 
 /**********************************/
-/* Toggle text wrap 👆️             */
-/***********************************/
+/* Toggle text wrap 👆️            */
+/**********************************/
 
 static void
 texty_window_class_init (TextyWindowClass *klass)
@@ -714,6 +740,7 @@ texty_window_init (TextyWindow *self)
   g_autoptr (GSimpleAction) toggle_text_wrap_action;
   GtkTextBuffer *buffer;
   GtkCssProvider *cssProvider;
+  gboolean text_wrap;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -780,4 +807,10 @@ texty_window_init (TextyWindow *self)
          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "lg-font");
   gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "padded");
+
+  /* apply preferences */
+  text_wrap = get_text_wrap();
+  gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(self->text_view),
+                               text_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE);
+  g_simple_action_set_state (toggle_text_wrap_action, g_variant_new_boolean (text_wrap));
 }
