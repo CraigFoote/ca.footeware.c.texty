@@ -612,8 +612,8 @@ on_save_as_response(GObject      *source,
 
 static void
 texty_window__save_as (GAction     *action,
-                             GVariant    *parameter,
-                             TextyWindow *self)
+                       GVariant    *parameter,
+                       TextyWindow *self)
 {
   g_autoptr (GtkFileDialog) dialog = gtk_file_dialog_new ();
   /* present save file dialog */
