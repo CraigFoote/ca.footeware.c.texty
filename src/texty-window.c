@@ -38,6 +38,27 @@ struct _TextyWindow
 
 G_DEFINE_FINAL_TYPE (TextyWindow, texty_window, ADW_TYPE_APPLICATION_WINDOW)
 
+static void save_font_size(int value)
+{
+  GSettings *settings;
+
+  settings = g_settings_new("ca.footeware.c.texty");
+  g_settings_set_int (settings, "font-size", value);
+  g_object_unref(settings);
+}
+
+static gboolean get_font_size (void)
+{
+  GSettings *settings;
+  gboolean value;
+
+  settings = g_settings_new("ca.footeware.c.texty");
+  value = g_settings_get_int(settings, "font-size");
+  g_object_unref(settings);
+
+  return value;
+}
+
 static void save_text_wrap(gboolean value)
 {
   GSettings *settings;
@@ -683,8 +704,8 @@ texty_window__update_cursor_position (GtkTextBuffer *buffer,
 
 static void
 texty_window__toggle_text_wrap (GSimpleAction *action,
-                                       GVariant      *parameter,
-                                       TextyWindow   *self)
+                                GVariant      *parameter,
+                                TextyWindow   *self)
 {
   GVariant *state;
   gboolean current_state;
@@ -704,6 +725,43 @@ texty_window__toggle_text_wrap (GSimpleAction *action,
 
 /**********************************/
 /* Toggle text wrap 👆️            */
+/**********************************/
+
+static void
+texty_window__set_font_size (GSimpleAction *action,
+                             GVariant      *parameter,
+                             TextyWindow   *self)
+{
+  gint font_size;
+  char *css_class_name;
+  const char *css_classes[2];
+  GtkCssProvider *provider;
+  char *css;
+  GdkDisplay *display;
+
+  font_size = g_variant_get_int32 (parameter);
+
+  css_class_name = g_strdup_printf("font-size-%d", font_size);
+  css_classes[0] = css_class_name;
+  css_classes[1] = NULL;  // Null-terminate the array
+  gtk_widget_set_css_classes(GTK_WIDGET(self->text_view), css_classes);
+  provider = gtk_css_provider_new();
+  css = g_strdup_printf("textview.%s { font-size: %dpx; font-family: monospace; }", css_class_name, font_size);
+  gtk_css_provider_load_from_string(provider, css);
+  display = gdk_display_get_default();
+  gtk_style_context_add_provider_for_display(display,
+                                             GTK_STYLE_PROVIDER(provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_free(css);
+  g_free(css_class_name);
+  g_object_unref(provider);
+
+  g_simple_action_set_state (action, parameter);
+  save_font_size (g_variant_get_int32 (parameter));
+}
+
+/**********************************/
+/* Set font size 👆️               */
 /**********************************/
 
 static void
@@ -738,9 +796,15 @@ texty_window_init (TextyWindow *self)
   g_autoptr (GSimpleAction) open_action;
   g_autoptr (GSimpleAction) save_as_action;
   g_autoptr (GSimpleAction) toggle_text_wrap_action;
+  g_autoptr (GSimpleAction) set_font_size_action;
   GtkTextBuffer *buffer;
-  GtkCssProvider *cssProvider;
+  GtkCssProvider *css_provider;
   gboolean text_wrap;
+  int font_size;
+  char *css_class_name;
+  const char *css_classes[2];
+  char *css;
+  GdkDisplay *display;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -788,8 +852,11 @@ texty_window_init (TextyWindow *self)
                     "activate",
                     G_CALLBACK (texty_window__toggle_text_wrap),
                     self);
-   g_action_map_add_action(G_ACTION_MAP(self), G_ACTION(toggle_text_wrap_action));
-
+  g_action_map_add_action(G_ACTION_MAP(self), G_ACTION(toggle_text_wrap_action));
+  text_wrap = get_text_wrap();
+  gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(self->text_view),
+                               text_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE);
+  g_simple_action_set_state (toggle_text_wrap_action, g_variant_new_boolean (text_wrap));
 
   /* cursor position */
   buffer = gtk_text_view_get_buffer (self->text_view);
@@ -798,19 +865,30 @@ texty_window_init (TextyWindow *self)
                     G_CALLBACK (texty_window__update_cursor_position),
                     self);
 
-  /* apply CSS */
-  cssProvider = gtk_css_provider_new();
-  gtk_css_provider_load_from_resource (cssProvider, "/ca/footeware/c/texty/main.css");
-  gtk_style_context_add_provider_for_display(
-         gdk_display_get_default(),
-         GTK_STYLE_PROVIDER(cssProvider),
-         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-  gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "lg-font");
-  gtk_widget_add_css_class (GTK_WIDGET(self->text_view), "padded");
-
-  /* apply preferences */
-  text_wrap = get_text_wrap();
-  gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(self->text_view),
-                               text_wrap ? GTK_WRAP_WORD : GTK_WRAP_NONE);
-  g_simple_action_set_state (toggle_text_wrap_action, g_variant_new_boolean (text_wrap));
+  /* set font size */
+  set_font_size_action = g_simple_action_new_stateful ("set-font-size",
+                                                     g_variant_type_new("i"),
+                                                     g_variant_new_int32 (22));
+  g_signal_connect (set_font_size_action,
+                    "activate",
+                    G_CALLBACK (texty_window__set_font_size),
+                    self);
+  g_action_map_add_action(G_ACTION_MAP(self), G_ACTION(set_font_size_action));
+  /* init */
+  font_size = get_font_size ();
+  g_simple_action_set_state (set_font_size_action, g_variant_new_int32 (font_size));
+  css_class_name = g_strdup_printf("font-size-%d", font_size);
+  css_classes[0] = css_class_name;
+  css_classes[1] = NULL;  /* Null-terminate the array */
+  gtk_widget_set_css_classes(GTK_WIDGET(self->text_view), css_classes);
+  css_provider = gtk_css_provider_new();
+  css = g_strdup_printf("textview.%s { font-size: %dpx; font-family: monospace; }", css_class_name, font_size);
+  gtk_css_provider_load_from_string(css_provider, css);
+  display = gdk_display_get_default();
+  gtk_style_context_add_provider_for_display(display,
+                                             GTK_STYLE_PROVIDER(css_provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_free(css);
+  g_free(css_class_name);
+  g_object_unref(css_provider);
 }

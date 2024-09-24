@@ -6,5 +6,10 @@
       <summary>Whether or not text is wrapped.</summary>
       <description>A boolean value describing whether or not to wrap the entered text.</description>
     </key>
+    <key name="font-size" type="i">
+      <default>22</default>
+      <summary>Font size.</summary>
+      <description>An integer value describing the entered text font size in pixels.</description>
+    </key>
   </schema>
 </schemalist>

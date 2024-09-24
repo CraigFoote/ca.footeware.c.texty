@@ -10,9 +10,6 @@
     <property name="default-height">600</property>
     <property name="default-width">1000</property>
     <property name="title">texty</property>
-    <style>
-      <!-- <class name="devel"/> -->
-    </style>
     <property name="content">
       <object class="AdwToolbarView">
         <property name="content">
@@ -90,6 +87,46 @@
         <attribute name="action">win.toggle-text-wrap</attribute>
         <attribute name="label" translatable="yes">_Wrap Text</attribute>
       </item>
+      <submenu>
+        <attribute name="label" translatable="yes">_Font Size</attribute>
+        <section>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">18</attribute>
+            <attribute name="label">18</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">20</attribute>
+            <attribute name="label">20</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">22</attribute>
+            <attribute name="label">22</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">24</attribute>
+            <attribute name="label">24</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">26</attribute>
+            <attribute name="label">26</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">28</attribute>
+            <attribute name="label">28</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">30</attribute>
+            <attribute name="label">30</attribute>
+          </item>
+        </section>
+      </submenu>
     </section>
     <section>
       <item>
