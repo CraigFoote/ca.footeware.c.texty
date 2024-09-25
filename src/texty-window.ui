@@ -92,6 +92,16 @@
         <section>
           <item>
             <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">14</attribute>
+            <attribute name="label">14</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
+            <attribute name="target" type="i">16</attribute>
+            <attribute name="label">16</attribute>
+          </item>
+          <item>
+            <attribute name="action">win.set-font-size</attribute>
             <attribute name="target" type="i">18</attribute>
             <attribute name="label">18</attribute>
           </item>

@@ -99,7 +99,7 @@ save_file_complete (GObject      *source_object,
   self = user_data;
 
   error =  NULL;
-  /* the main save function will prompt to replace if exists */
+  /* the save function will prompt to replace if exists */
   g_file_replace_contents_finish (self->file, result, NULL, &error);
 
   self = TEXTY_WINDOW (user_data);
@@ -765,6 +765,120 @@ texty_window__set_font_size (GSimpleAction *action,
 /**********************************/
 
 static void
+on_close_save_response (GObject      *source,
+                  GAsyncResult *result,
+                  gpointer      user_data)
+{
+  GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
+  TextyWindow *self = user_data;
+
+  /* get the selected file and save buffer contents into it */
+  g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
+  if (file != NULL)
+    {
+      self->file = file;
+      save_file (self);
+    }
+}
+
+static void
+on_close_save (TextyWindow *self)
+{
+  /* check if we have a file yet */
+  if (self->file != NULL )
+    {
+      save_file (self);
+    }
+  else
+    {
+      /* prompt user for file */
+      g_autoptr (GtkFileDialog) dialog;
+      dialog = gtk_file_dialog_new ();
+
+      /* present save file dialog */
+      gtk_file_dialog_save (dialog,
+                            GTK_WINDOW (self),
+                            NULL,
+                            on_close_save_response,
+                            self);
+    }
+}
+
+static void
+on_close_response(AdwAlertDialog *dialog,
+                  GAsyncResult   *result,
+                  TextyWindow    *self)
+{
+  GtkTextBuffer *buffer;
+  GtkTextIter start;
+  GtkTextIter end;
+
+  const char *response = adw_alert_dialog_choose_finish (dialog, result);
+
+  if (g_str_equal(response, "cancel"))
+    {
+      return;
+    }
+  if (g_str_equal(response, "discard"))
+    {
+      /* clear buffer */
+      buffer = gtk_text_view_get_buffer (self->text_view);
+      gtk_text_buffer_get_start_iter (buffer, &start);
+      gtk_text_buffer_get_end_iter (buffer, &end);
+      gtk_text_buffer_delete (buffer, &start, &end);
+      gtk_text_buffer_set_modified (buffer, FALSE);
+
+      /* set window title */
+      gtk_window_set_title (GTK_WINDOW (self), "Texty");
+
+      /* clear file ref */
+      self->file = NULL;
+
+      /* close window */
+      gtk_window_close(GTK_WINDOW(self));
+    }
+  else if (g_str_equal(response, "save"))
+    {
+      on_close_save (self);
+    }
+}
+
+static void
+on_close_request(TextyWindow *self,
+                 gpointer user_data)
+{
+  GtkTextBuffer *buffer;
+  gboolean modified;
+
+  /* check if text buffer has been changed */
+  buffer = gtk_text_view_get_buffer (self->text_view);
+  modified = gtk_text_buffer_get_modified (buffer);
+  if (modified)
+    {
+      /* prompt user to save file */
+      AdwDialog *dialog = adw_alert_dialog_new (
+          "Save Changes?",
+          "There are unsaved modifications.\nDo you want to save them?");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "yes");
+      adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
+                                      "cancel", "_Cancel",
+                                      "discard", "_Discard",
+                                      "save", "_Save",
+                                      NULL);
+      adw_alert_dialog_choose (ADW_ALERT_DIALOG (dialog),
+                               GTK_WIDGET (self),
+                               NULL,
+                               (GAsyncReadyCallback) on_close_response,
+                               self);
+    }
+}
+
+/**********************************/
+/* Closing 👆️                     */
+/**********************************/
+
+static void
 texty_window_class_init (TextyWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -891,4 +1005,7 @@ texty_window_init (TextyWindow *self)
   g_free(css);
   g_free(css_class_name);
   g_object_unref(css_provider);
+
+  /* Listen for window close and prompt if modified */
+  g_signal_connect(self, "close-request", G_CALLBACK(on_close_request), NULL);
 }
