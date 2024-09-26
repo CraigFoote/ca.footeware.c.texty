@@ -1,7 +1,7 @@
 {
     "id" : "ca.footeware.c.texty",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "master",
+    "runtime-version" : "47",
     "sdk" : "org.gnome.Sdk",
     "command" : "texty",
     "finish-args" : [
@@ -32,6 +32,9 @@
                     "type" : "git",
                     "url" : "file:///home/craig/Projects"
                 }
+            ],
+            "config-opts" : [
+                "--libdir=lib"
             ]
         }
     ],
