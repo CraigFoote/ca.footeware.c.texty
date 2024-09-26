@@ -29,127 +29,130 @@ struct _TextyApplication
   AdwApplication parent_instance;
 };
 
-G_DEFINE_FINAL_TYPE(TextyApplication, texty_application, ADW_TYPE_APPLICATION)
+G_DEFINE_FINAL_TYPE (TextyApplication, texty_application, ADW_TYPE_APPLICATION)
 
 TextyApplication *
-texty_application_new(const char *application_id,
-                      GApplicationFlags flags)
+texty_application_new (const char *application_id,
+                       GApplicationFlags flags)
 {
-  g_return_val_if_fail(application_id != NULL, NULL);
+  g_return_val_if_fail (application_id != NULL, NULL);
 
-  return g_object_new(TEXTY_TYPE_APPLICATION,
-                      "application-id", application_id,
-                      "flags", flags,
-                      NULL);
+  return g_object_new (TEXTY_TYPE_APPLICATION,
+                       "application-id", application_id,
+                       "flags", flags,
+                       NULL);
 }
 
 static void
-texty_application_activate(GApplication *app)
+texty_application_activate (GApplication *app)
 {
   GtkWindow *window;
 
-  g_assert(TEXTY_IS_APPLICATION(app));
+  g_assert (TEXTY_IS_APPLICATION (app));
 
-  window = gtk_application_get_active_window(GTK_APPLICATION(app));
+  window = gtk_application_get_active_window (GTK_APPLICATION (app));
 
   if (window == NULL)
-    window = g_object_new(TEXTY_TYPE_WINDOW,
-                          "application", app,
-                          NULL);
+    window = g_object_new (TEXTY_TYPE_WINDOW,
+                           "application", app,
+                           NULL);
 
-  gtk_window_present(window);
+  gtk_window_present (window);
 }
 
 static void
-texty_application_class_init(TextyApplicationClass *klass)
+texty_application_class_init (TextyApplicationClass *klass)
 {
-  GApplicationClass *app_class = G_APPLICATION_CLASS(klass);
+  GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
 
   app_class->activate = texty_application_activate;
 }
 
 static void
-texty_application_about_action(GSimpleAction *action,
-                               GVariant *parameter,
-                               gpointer user_data)
+texty_application_about_action (GSimpleAction *action,
+                                GVariant *parameter,
+                                gpointer user_data)
 {
   static const char *developers[] = {
-      "Footeware.ca http://Footeware.ca",
-      NULL};
+    "Footeware.ca http://Footeware.ca",
+    NULL
+  };
   TextyApplication *self = user_data;
   GtkWindow *window = NULL;
 
-  g_assert(TEXTY_IS_APPLICATION(self));
+  g_assert (TEXTY_IS_APPLICATION (self));
 
-  window = gtk_application_get_active_window(GTK_APPLICATION(self));
+  window = gtk_application_get_active_window (GTK_APPLICATION (self));
 
-  adw_show_about_dialog(GTK_WIDGET(window),
-                        "application-name", "Texty",
-                        "application-icon", "ca.footeware.c.texty",
-                        "developer-name", "Another fine mess by Footeware.ca",
-                        "translator-credits", _("translator-credits"),
-                        "version", "1.7.0",
-                        "developers", developers,
-                        "copyright", "©2024 Craig Foote",
-                        NULL);
+  adw_show_about_dialog (GTK_WIDGET (window),
+                         "application-name", "Texty",
+                         "application-icon", "ca.footeware.c.texty",
+                         "developer-name", "Another fine mess by Footeware.ca",
+                         "translator-credits", _ ("translator-credits"),
+                         "version", "1.7.1",
+                         "developers", developers,
+                         "copyright", "©2024 Craig Foote",
+                         NULL);
 }
 
 static void
-texty_application_quit_action(GSimpleAction *action,
-                              GVariant *parameter,
-                              gpointer user_data)
+texty_application_quit_action (GSimpleAction *action,
+                               GVariant *parameter,
+                               gpointer user_data)
 {
   TextyApplication *self = user_data;
 
-  g_assert(TEXTY_IS_APPLICATION(self));
+  g_assert (TEXTY_IS_APPLICATION (self));
 
-  g_application_quit(G_APPLICATION(self));
+  g_application_quit (G_APPLICATION (self));
 }
 
 static const GActionEntry app_actions[] = {
-    {"quit", texty_application_quit_action},
-    {"about", texty_application_about_action}};
+  { "quit", texty_application_quit_action },
+  { "about", texty_application_about_action }
+};
 
 static void
-texty_application_init(TextyApplication *self)
+texty_application_init (TextyApplication *self)
 {
-  g_action_map_add_action_entries(G_ACTION_MAP(self),
-                                  app_actions,
-                                  G_N_ELEMENTS(app_actions),
-                                  self);
-  gtk_application_set_accels_for_action(GTK_APPLICATION(self),
-                                        "app.quit",
-                                        (const char *[]){
-                                            "<primary>q",
-                                            NULL});
-  gtk_application_set_accels_for_action(GTK_APPLICATION(self),
-                                        "win.save",
-                                        (const char *[]){
-                                            "<Ctrl>s",
-                                            NULL,
-                                        });
-  gtk_application_set_accels_for_action(GTK_APPLICATION(self),
-                                        "win.open",
-                                        (const char *[]){
-                                            "<Ctrl>o",
-                                            NULL,
-                                        });
-  gtk_application_set_accels_for_action(GTK_APPLICATION(self),
-                                        "win.new",
-                                        (const char *[]){
-                                            "<Ctrl>n",
-                                            NULL,
-                                        });
-  gtk_application_set_accels_for_action(GTK_APPLICATION(self),
-                                        "win.save-as",
-                                        (const char *[]){
-                                            "<Ctrl><Shift>s",
-                                            NULL,
-                                        });
-  gtk_application_set_accels_for_action(GTK_APPLICATION(self),
-                                        "win.toggle-text-wrap",
-                                        (const char *[]){
-                                            "<Ctrl><Shift>w",
-                                            NULL,
-                                        });
+  g_action_map_add_action_entries (G_ACTION_MAP (self),
+                                   app_actions,
+                                   G_N_ELEMENTS (app_actions),
+                                   self);
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "app.quit",
+                                         (const char *[]){
+                                             "<primary>q",
+                                             NULL });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "win.save",
+                                         (const char *[]){
+                                             "<Ctrl>s",
+                                             NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "win.open",
+                                         (const char *[]){
+                                             "<Ctrl>o",
+                                             NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "win.new",
+                                         (const char *[]){
+                                             "<Ctrl>n",
+                                             NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "win.save-as",
+                                         (const char *[]){
+                                             "<Ctrl><Shift>s",
+                                             NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "win.toggle-text-wrap",
+                                         (const char *[]){
+                                             "<Ctrl><Shift>w",
+                                             NULL,
+                                         });
 }
+
