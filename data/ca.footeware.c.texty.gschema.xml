@@ -11,5 +11,15 @@
       <summary>Font size.</summary>
       <description>An integer value describing the entered text font size in pixels.</description>
     </key>
+    <key name="window-height" type="i">
+      <default>600</default>
+      <summary>Window height</summary>
+      <description>The height of the window</description>
+    </key>
+    <key name="window-width" type="i">
+      <default>1000</default>
+      <summary>Window width</summary>
+      <description>The width of the window</description>
+    </key>
   </schema>
 </schemalist>
