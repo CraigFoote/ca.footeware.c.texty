@@ -599,7 +599,7 @@ texty_window__open (GAction *action,
           "Save Changes?",
           "There are unsaved modifications.\nDo you want to save them?");
       adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
-      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "yes");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "save");
       adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
                                       "cancel", "_Cancel",
                                       "discard", "_Discard",
@@ -942,7 +942,7 @@ on_close_request (TextyWindow *self,
           "Save Changes?",
           "There are unsaved modifications.\nDo you want to save them?");
       adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
-      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "yes");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "save");
       adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
                                       "cancel", "_Cancel",
                                       "discard", "_Discard",
@@ -1100,4 +1100,5 @@ texty_window_init (TextyWindow *self)
   /* Listen for window close and prompt if modified */
   g_signal_connect (self, "close-request", G_CALLBACK (on_close_request), NULL);
 }
+
 
