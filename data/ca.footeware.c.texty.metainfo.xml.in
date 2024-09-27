@@ -5,9 +5,9 @@
   <project_license>GPL-3.0-or-later</project_license>
 
   <name>Texty</name>
-  <summary>A minimal text editor.</summary>
+  <summary>A minimal text editor</summary>
   <description>
-    <p>No description</p>
+    <p>A minimal GTK4 / ADW text editor cobbled together from various C tutorials and internet posts.</p>
   </description>
 
   <developer id="tld.vendor">

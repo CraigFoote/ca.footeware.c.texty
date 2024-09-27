@@ -28,6 +28,7 @@ struct _TextyWindow
   /* Template widgets */
   AdwHeaderBar *header_bar;
   GtkTextView *text_view;
+  GtkTextBuffer *buffer;
   GtkButton *save_button;
   GtkLabel *cursor_pos;
   AdwToastOverlay *toast_overlay;
@@ -37,6 +38,20 @@ struct _TextyWindow
 };
 
 G_DEFINE_FINAL_TYPE (TextyWindow, texty_window, ADW_TYPE_APPLICATION_WINDOW)
+
+static GFile *
+get_current_file (GtkTextBuffer *buffer)
+{
+  return g_object_get_data (G_OBJECT (buffer), "current-file");
+}
+
+static void
+set_current_file (GtkTextBuffer *buffer, GFile *file)
+{
+  if (file)
+    file = g_file_dup (file);
+  g_object_set_data_full (G_OBJECT (buffer), "current-file", file, g_object_unref);
+}
 
 static void
 save_font_size (int value)
@@ -131,22 +146,20 @@ save_file_complete (GObject *source_object,
   g_autoptr (GError) error;
 
   self = user_data;
-
+  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->text_view));
   error = NULL;
+
   /* the save function will prompt to replace if exists */
-  g_file_replace_contents_finish (self->file, result, NULL, &error);
+  g_file_replace_contents_finish (get_current_file (buffer), result, NULL, &error);
 
   self = TEXTY_WINDOW (user_data);
-  /* store a reference to the file, duplicated */
-  self->file = g_file_dup (self->file);
 
   /* mark textview as having no changes to save */
-  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->text_view));
   gtk_text_buffer_set_modified (buffer, FALSE);
 
   /* Query the file for its display name */
   display_name = NULL;
-  info = g_file_query_info (self->file,
+  info = g_file_query_info (get_current_file (buffer),
                             "standard::display-name",
                             G_FILE_QUERY_INFO_NONE,
                             NULL,
@@ -156,7 +169,7 @@ save_file_complete (GObject *source_object,
         g_strdup (g_file_info_get_attribute_string (info,
                                                     "standard::display-name"));
   else
-    display_name = g_file_get_basename (self->file);
+    display_name = g_file_get_basename (get_current_file (buffer));
 
   /* display name in window title */
   gtk_window_set_title (GTK_WINDOW (self), display_name);
@@ -182,6 +195,7 @@ save_file (TextyWindow *self)
   char *text;
   g_autoptr (GBytes) bytes;
 
+  GFile *file = get_current_file (self->buffer);
   buffer = gtk_text_view_get_buffer (self->text_view);
 
   /* retrieve the iterators at the start and end of the buffer */
@@ -194,7 +208,7 @@ save_file (TextyWindow *self)
   bytes = g_bytes_new_take (text, strlen (text));
 
   /* start the asynchronous operation to save the data into the file */
-  g_file_replace_contents_bytes_async (self->file,
+  g_file_replace_contents_bytes_async (file,
                                        bytes,
                                        NULL,
                                        FALSE,
@@ -216,7 +230,7 @@ on_save_response (GObject *source,
   g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
   if (file != NULL)
     {
-      self->file = file;
+      set_current_file (self->buffer, file);
       save_file (self);
     }
 }
@@ -227,7 +241,7 @@ texty_window__save (GAction *action G_GNUC_UNUSED,
                     TextyWindow *self)
 {
   /* check if we have a file yet */
-  if (self->file != NULL)
+  if (get_current_file (self->buffer) != NULL)
     {
       save_file (self);
     }
@@ -270,7 +284,7 @@ save_modified_file_complete (GObject *source_object,
   /* the main save function will prompt to replace if exists */
   g_file_replace_contents_finish (file, result, NULL, &error);
   /* store a reference to the file, duplicated */
-  self->file = g_file_dup (file);
+  set_current_file (self->buffer, file);
   /* mark textview as having no changes to save */
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->text_view));
   gtk_text_buffer_set_modified (buffer, FALSE);
@@ -326,7 +340,7 @@ save_modified_file (TextyWindow *self)
   bytes = g_bytes_new_take (text, strlen (text));
 
   /* Start the asynchronous operation to save the data into the file */
-  g_file_replace_contents_bytes_async (self->file,
+  g_file_replace_contents_bytes_async (get_current_file (buffer),
                                        bytes,
                                        NULL,
                                        FALSE,
@@ -348,7 +362,7 @@ on_save_modified_dialog_response (GObject *source,
   g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
   if (file != NULL)
     {
-      self->file = file;
+      set_current_file (self->buffer, file);
       save_modified_file (self);
     }
 }
@@ -363,6 +377,7 @@ on_save_modified_response (AdwAlertDialog *dialog,
   GtkTextIter end;
 
   const char *response = adw_alert_dialog_choose_finish (dialog, result);
+  buffer = gtk_text_view_get_buffer (self->text_view);
 
   if (g_str_equal (response, "cancel"))
     {
@@ -371,7 +386,6 @@ on_save_modified_response (AdwAlertDialog *dialog,
   if (g_str_equal (response, "discard"))
     {
       /* clear buffer */
-      buffer = gtk_text_view_get_buffer (self->text_view);
       gtk_text_buffer_get_start_iter (buffer, &start);
       gtk_text_buffer_get_end_iter (buffer, &end);
       gtk_text_buffer_delete (buffer, &start, &end);
@@ -381,11 +395,11 @@ on_save_modified_response (AdwAlertDialog *dialog,
       gtk_window_set_title (GTK_WINDOW (self), "Texty");
 
       /* clear file ref */
-      self->file = NULL;
+      set_current_file (buffer, NULL);
     }
   else if (g_str_equal (response, "save"))
     {
-      if (self->file == NULL)
+      if (get_current_file (buffer) == NULL)
         {
           g_autoptr (GtkFileDialog) save_dialog;
           save_dialog = gtk_file_dialog_new ();
@@ -455,7 +469,7 @@ texty_window__new (GAction *action,
       gtk_text_buffer_delete (buffer, &start, &end);
       gtk_window_set_title (GTK_WINDOW (self), "Texty");
       gtk_text_buffer_set_modified (buffer, FALSE);
-      self->file = NULL;
+      set_current_file (buffer, NULL);
     }
 
   /* put cursor in textview */
@@ -548,7 +562,7 @@ open_file_complete (GObject *source_object,
   /* set 'modified' bit to indicate it does not yet need saving */
   gtk_text_buffer_set_modified (buffer, FALSE);
   /* keep a pointer to the file */
-  self->file = g_file_dup (file);
+  set_current_file (self->buffer, file);
 
   /* Set the title using the display name */
   gtk_window_set_title (GTK_WINDOW (self), display_name);
@@ -653,7 +667,7 @@ save_file_as_complete (GObject *source_object,
 
   self = TEXTY_WINDOW (user_data);
   /* store a reference to the file, duplicated */
-  self->file = g_file_dup (file);
+  set_current_file (self->buffer, file);
 
   /* mark textview as having no changes to save */
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->text_view));
@@ -661,7 +675,7 @@ save_file_as_complete (GObject *source_object,
 
   /* Query the file for its display name */
   display_name = NULL;
-  info = g_file_query_info (file,
+  info = g_file_query_info (get_current_file (self->buffer),
                             "standard::display-name",
                             G_FILE_QUERY_INFO_NONE,
                             NULL,
@@ -671,7 +685,7 @@ save_file_as_complete (GObject *source_object,
         g_strdup (g_file_info_get_attribute_string (info,
                                                     "standard::display-name"));
   else
-    display_name = g_file_get_basename (file);
+    display_name = g_file_get_basename (get_current_file (self->buffer));
 
   /* display name in window title */
   gtk_window_set_title (GTK_WINDOW (self), display_name);
@@ -856,7 +870,7 @@ on_close_save_response (GObject *source,
   g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
   if (file != NULL)
     {
-      self->file = file;
+      set_current_file (self->buffer, file);
       save_file (self);
     }
 }
@@ -865,7 +879,7 @@ static void
 on_close_save (TextyWindow *self)
 {
   /* check if we have a file yet */
-  if (self->file != NULL)
+  if (get_current_file (self->buffer) != NULL)
     {
       save_file (self);
     }
@@ -912,14 +926,14 @@ on_close_response (AdwAlertDialog *dialog,
       gtk_window_set_title (GTK_WINDOW (self), "Texty");
 
       /* clear file ref */
-      self->file = NULL;
+      set_current_file (buffer, NULL);
 
       /* close window */
       gtk_window_close (GTK_WINDOW (self));
     }
   else if (g_str_equal (response, "save"))
     {
-      on_close_save (self); // TODO
+      on_close_save (self);
     }
 }
 
@@ -1011,6 +1025,9 @@ texty_window_init (TextyWindow *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->buffer = gtk_text_view_get_buffer (self->text_view);
+  g_object_set_data (G_OBJECT (self->buffer), "current-file", NULL);
+
   /* save */
   save_action = g_simple_action_new ("save", NULL);
   g_signal_connect (save_action,
@@ -1100,5 +1117,3 @@ texty_window_init (TextyWindow *self)
   /* Listen for window close and prompt if modified */
   g_signal_connect (self, "close-request", G_CALLBACK (on_close_request), NULL);
 }
-
-

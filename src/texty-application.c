@@ -47,16 +47,11 @@ static void
 texty_application_activate (GApplication *app)
 {
   GtkWindow *window;
-
+  
   g_assert (TEXTY_IS_APPLICATION (app));
-
-  window = gtk_application_get_active_window (GTK_APPLICATION (app));
-
-  if (window == NULL)
-    window = g_object_new (TEXTY_TYPE_WINDOW,
-                           "application", app,
-                           NULL);
-
+  window = g_object_new (TEXTY_TYPE_WINDOW,
+                         "application", app,
+                         NULL);
   gtk_window_present (window);
 }
 
@@ -89,10 +84,26 @@ texty_application_about_action (GSimpleAction *action,
                          "application-icon", "ca.footeware.c.texty",
                          "developer-name", "Another fine mess by Footeware.ca",
                          "translator-credits", _ ("translator-credits"),
-                         "version", "1.8.0",
+                         "version", "1.9.0",
                          "developers", developers,
                          "copyright", "©2024 Craig Foote",
                          NULL);
+}
+
+static void
+texty_application_new_window_action (GSimpleAction *action,
+                                     GVariant *parameter,
+                                     gpointer user_data)
+{
+  GtkWindow *window;
+  TextyApplication *self = user_data;
+
+  g_assert (TEXTY_IS_APPLICATION (self));
+  window = g_object_new (TEXTY_TYPE_WINDOW,
+                         "application",
+                         self,
+                         NULL);
+  gtk_window_present (window);
 }
 
 static void
@@ -101,15 +112,14 @@ texty_application_quit_action (GSimpleAction *action,
                                gpointer user_data)
 {
   TextyApplication *self = user_data;
-
   g_assert (TEXTY_IS_APPLICATION (self));
-
   g_application_quit (G_APPLICATION (self));
 }
 
 static const GActionEntry app_actions[] = {
   { "quit", texty_application_quit_action },
-  { "about", texty_application_about_action }
+  { "about", texty_application_about_action },
+  { "new-window", texty_application_new_window_action }
 };
 
 static void
@@ -119,10 +129,11 @@ texty_application_init (TextyApplication *self)
                                    app_actions,
                                    G_N_ELEMENTS (app_actions),
                                    self);
+
   gtk_application_set_accels_for_action (GTK_APPLICATION (self),
                                          "app.quit",
                                          (const char *[]){
-                                             "<primary>q",
+                                             "<Ctrl>q",
                                              NULL });
   gtk_application_set_accels_for_action (GTK_APPLICATION (self),
                                          "win.save",
@@ -152,6 +163,12 @@ texty_application_init (TextyApplication *self)
                                          "win.toggle-text-wrap",
                                          (const char *[]){
                                              "<Ctrl><Shift>w",
+                                             NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "app.new-window",
+                                         (const char *[]){
+                                             "<Ctrl><Shift>n",
                                              NULL,
                                          });
 }
