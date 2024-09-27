@@ -337,6 +337,23 @@ save_modified_file (TextyWindow *self)
 }
 
 static void
+on_save_modified_dialog_response (GObject *source,
+                                  GAsyncResult *result,
+                                  gpointer user_data)
+{
+  GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
+  TextyWindow *self = user_data;
+
+  /* get the selected file and save buffer contents into it */
+  g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
+  if (file != NULL)
+    {
+      self->file = file;
+      save_modified_file (self);
+    }
+}
+
+static void
 on_save_modified_response (AdwAlertDialog *dialog,
                            GAsyncResult *result,
                            TextyWindow *self)
@@ -368,7 +385,22 @@ on_save_modified_response (AdwAlertDialog *dialog,
     }
   else if (g_str_equal (response, "save"))
     {
-      save_modified_file (self);
+      if (self->file == NULL)
+        {
+          g_autoptr (GtkFileDialog) save_dialog;
+          save_dialog = gtk_file_dialog_new ();
+
+          /* present save file dialog */
+          gtk_file_dialog_save (save_dialog,
+                                GTK_WINDOW (self),
+                                NULL,
+                                on_save_modified_dialog_response,
+                                self);
+        }
+      else
+        {
+          save_modified_file (self);
+        }
     }
 }
 
@@ -396,12 +428,19 @@ texty_window__new (GAction *action,
           "Save Changes?",
           "There are unsaved modifications.\nDo you want to save them?");
       adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
-      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "yes");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "save");
       adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
                                       "cancel", "_Cancel",
                                       "discard", "_Discard",
                                       "save", "_Save",
                                       NULL);
+      adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog),
+                                                "discard",
+                                                ADW_RESPONSE_DESTRUCTIVE);
+      adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog),
+                                                "save",
+                                                ADW_RESPONSE_SUGGESTED);
+
       adw_alert_dialog_choose (ADW_ALERT_DIALOG (dialog),
                                GTK_WIDGET (self),
                                NULL,
@@ -566,6 +605,13 @@ texty_window__open (GAction *action,
                                       "discard", "_Discard",
                                       "save", "_Save",
                                       NULL);
+      adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog),
+                                                "discard",
+                                                ADW_RESPONSE_DESTRUCTIVE);
+      adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog),
+                                                "save",
+                                                ADW_RESPONSE_SUGGESTED);
+
       adw_alert_dialog_choose (ADW_ALERT_DIALOG (dialog),
                                GTK_WIDGET (self),
                                NULL,
@@ -873,7 +919,7 @@ on_close_response (AdwAlertDialog *dialog,
     }
   else if (g_str_equal (response, "save"))
     {
-      on_close_save (self);
+      on_close_save (self); // TODO
     }
 }
 
@@ -902,6 +948,13 @@ on_close_request (TextyWindow *self,
                                       "discard", "_Discard",
                                       "save", "_Save",
                                       NULL);
+      adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog),
+                                                "discard",
+                                                ADW_RESPONSE_DESTRUCTIVE);
+      adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog),
+                                                "save",
+                                                ADW_RESPONSE_SUGGESTED);
+
       adw_alert_dialog_choose (ADW_ALERT_DIALOG (dialog),
                                GTK_WIDGET (self),
                                NULL,
