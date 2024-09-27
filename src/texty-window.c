@@ -1111,6 +1111,7 @@ texty_window_init (TextyWindow *self)
   g_free (css);
   g_free (css_class_name);
   g_object_unref (css_provider);
+
   /* init window-size */
   load_window_size (self);
 

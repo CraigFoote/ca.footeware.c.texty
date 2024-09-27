@@ -47,7 +47,7 @@ static void
 texty_application_activate (GApplication *app)
 {
   GtkWindow *window;
-  
+
   g_assert (TEXTY_IS_APPLICATION (app));
   window = g_object_new (TEXTY_TYPE_WINDOW,
                          "application", app,
@@ -84,7 +84,7 @@ texty_application_about_action (GSimpleAction *action,
                          "application-icon", "ca.footeware.c.texty",
                          "developer-name", "Another fine mess by Footeware.ca",
                          "translator-credits", _ ("translator-credits"),
-                         "version", "1.9.0",
+                         "version", "1.9.1",
                          "developers", developers,
                          "copyright", "©2024 Craig Foote",
                          NULL);
