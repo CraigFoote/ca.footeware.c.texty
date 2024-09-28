@@ -4,8 +4,8 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
 
-  <name>Texty</name>
-  <summary>A minimal text editor</summary>
+  <name>texty</name>
+  <summary>a minimal text editor</summary>
   <description>
     <p>A minimal GTK4 / ADW text editor cobbled together from various C tutorials and internet posts.</p>
   </description>
@@ -15,11 +15,11 @@
   </developer>
 
   <!-- Requered: Should be a link to the upstream homepage for the component -->
-  <url type="homepage">https://example.org/</url>
+  <url type="homepage">http://footeware.ca/</url>
   <!-- Recommended: It is highly recommended for open-source projects to display the source code repository -->
-  <url type="vcs-browser">https://example.org/repository</url>
+  <url type="vcs-browser">https://github.com/CraigFoote/ca.footeware.c.texty</url>
   <!-- Should point to the software's bug tracking system, for users to report new bugs -->
-  <url type="bugtracker">https://example.org/issues</url>
+  <url type="bugtracker">https://github.com/CraigFoote/ca.footeware.c.texty/issues</url>
   <!-- Should link a FAQ page for this software, to answer some of the most-asked questions in detail -->
   <!-- URLs of this type should point to a webpage where users can submit or modify translations of the upstream project -->
   <url type="translate">https://example.org/translate</url>
@@ -38,18 +38,18 @@
      If this is present, appstreamcli compose will pull icons, keywords and categories from the desktop file. -->
   <launchable type="desktop-id">ca.footeware.c.texty.desktop</launchable>
   <!-- Use the OARS website (https://hughsie.github.io/oars/generate.html) to generate these and make sure to use oars-1.1 -->
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 
   <!-- Applications should set a brand color in both light and dark variants like so -->
   <branding>
-    <color type="primary" scheme_preference="light">#ff00ff</color>
-    <color type="primary" scheme_preference="dark">#993d3d</color>
+    <color type="primary" scheme_preference="light">#eceff4</color>
+    <color type="primary" scheme_preference="dark">#4c566a</color>
   </branding>
 
   <screenshots>
     <screenshot type="default">
-      <image>https://example.org/example1.png</image>
-      <caption>A caption</caption>
+      <image>https://i.ibb.co/Ph9mC63/texty-screenshot.png</image>
+      <caption>texty</caption>
     </screenshot>
     <screenshot>
       <image>https://example.org/example2.png</image>
@@ -71,3 +71,4 @@
   </releases>
 
 </component>
+

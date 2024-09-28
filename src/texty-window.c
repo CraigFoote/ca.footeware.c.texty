@@ -32,9 +32,6 @@ struct _TextyWindow
   GtkButton *save_button;
   GtkLabel *cursor_pos;
   AdwToastOverlay *toast_overlay;
-
-  /* instance variable */
-  GFile *file;
 };
 
 G_DEFINE_FINAL_TYPE (TextyWindow, texty_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -1118,3 +1115,4 @@ texty_window_init (TextyWindow *self)
   /* Listen for window close and prompt if modified */
   g_signal_connect (self, "close-request", G_CALLBACK (on_close_request), NULL);
 }
+
