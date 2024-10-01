@@ -26,7 +26,7 @@ struct _TextyWindow
   AdwApplicationWindow parent_instance;
 
   /* Template widgets */
-  AdwHeaderBar *header_bar;
+  AdwWindowTitle *window_title;
   GtkTextView *text_view;
   GtkTextBuffer *buffer;
   GtkButton *save_button;
@@ -137,6 +137,7 @@ save_file_complete (GObject *source_object,
 {
   g_autofree char *display_name;
   g_autoptr (GFileInfo) info;
+  g_autofree char *file_path;
   g_autofree char *msg;
   TextyWindow *self;
   GtkTextBuffer *buffer;
@@ -161,6 +162,8 @@ save_file_complete (GObject *source_object,
                             G_FILE_QUERY_INFO_NONE,
                             NULL,
                             NULL);
+  file_path = g_file_get_path (get_current_file (self->buffer));
+
   if (info != NULL)
     display_name =
         g_strdup (g_file_info_get_attribute_string (info,
@@ -168,8 +171,9 @@ save_file_complete (GObject *source_object,
   else
     display_name = g_file_get_basename (get_current_file (buffer));
 
-  /* display name in window title */
-  gtk_window_set_title (GTK_WINDOW (self), display_name);
+  /* display name & path in window title */
+  adw_window_title_set_title (self->window_title, display_name);
+  adw_window_title_set_subtitle (self->window_title, file_path);
 
   /* display toast */
   msg = NULL;
@@ -389,7 +393,8 @@ on_save_modified_response (AdwAlertDialog *dialog,
       gtk_text_buffer_set_modified (buffer, FALSE);
 
       /* set window title */
-      gtk_window_set_title (GTK_WINDOW (self), "Texty");
+      adw_window_title_set_title (self->window_title, "texty");
+      adw_window_title_set_subtitle (self->window_title, "a minimal text editor");
 
       /* clear file ref */
       set_current_file (buffer, NULL);
@@ -464,7 +469,8 @@ texty_window__new (GAction *action,
       gtk_text_buffer_get_start_iter (buffer, &start);
       gtk_text_buffer_get_end_iter (buffer, &end);
       gtk_text_buffer_delete (buffer, &start, &end);
-      gtk_window_set_title (GTK_WINDOW (self), "Texty");
+      adw_window_title_set_title (self->window_title, "texty");
+      adw_window_title_set_subtitle (self->window_title, "a minimal text editor");
       gtk_text_buffer_set_modified (buffer, FALSE);
       set_current_file (buffer, NULL);
     }
@@ -485,6 +491,7 @@ open_file_complete (GObject *source_object,
   GtkTextBuffer *buffer;
   GtkTextIter start;
   g_autofree char *display_name;
+  g_autofree char *file_path;
   g_autoptr (GFileInfo) info;
 
   GFile *file = G_FILE (source_object);
@@ -513,6 +520,8 @@ open_file_complete (GObject *source_object,
                             G_FILE_QUERY_INFO_NONE,
                             NULL,
                             NULL);
+  file_path = g_file_get_path (get_current_file (self->buffer));
+
   if (info != NULL)
     {
       display_name =
@@ -562,7 +571,8 @@ open_file_complete (GObject *source_object,
   set_current_file (self->buffer, file);
 
   /* Set the title using the display name */
-  gtk_window_set_title (GTK_WINDOW (self), display_name);
+  adw_window_title_set_title (self->window_title, display_name);
+  adw_window_title_set_subtitle (self->window_title, file_path);
 }
 
 static void
@@ -650,6 +660,7 @@ save_file_as_complete (GObject *source_object,
                        gpointer user_data)
 {
   g_autofree char *display_name;
+  g_autofree char *file_path;
   g_autoptr (GFileInfo) info;
   g_autofree char *msg;
   TextyWindow *self;
@@ -677,6 +688,8 @@ save_file_as_complete (GObject *source_object,
                             G_FILE_QUERY_INFO_NONE,
                             NULL,
                             NULL);
+  file_path = g_file_get_path (get_current_file (self->buffer));
+
   if (info != NULL)
     display_name =
         g_strdup (g_file_info_get_attribute_string (info,
@@ -685,7 +698,8 @@ save_file_as_complete (GObject *source_object,
     display_name = g_file_get_basename (get_current_file (self->buffer));
 
   /* display name in window title */
-  gtk_window_set_title (GTK_WINDOW (self), display_name);
+  adw_window_title_set_title (self->window_title, display_name);
+  adw_window_title_set_subtitle (self->window_title, file_path);
 
   /* display toast */
   msg = NULL;
@@ -920,7 +934,8 @@ on_close_response (AdwAlertDialog *dialog,
       gtk_text_buffer_set_modified (buffer, FALSE);
 
       /* set window title */
-      gtk_window_set_title (GTK_WINDOW (self), "Texty");
+      adw_window_title_set_title (self->window_title, "texty");
+      adw_window_title_set_subtitle (self->window_title, "a minimal text editor");
 
       /* clear file ref */
       set_current_file (buffer, NULL);
@@ -985,9 +1000,10 @@ texty_window_class_init (TextyWindowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/ca/footeware/c/texty/texty-window.ui");
+
   gtk_widget_class_bind_template_child (widget_class,
                                         TextyWindow,
-                                        header_bar);
+                                        window_title);
   gtk_widget_class_bind_template_child (widget_class,
                                         TextyWindow,
                                         text_view);

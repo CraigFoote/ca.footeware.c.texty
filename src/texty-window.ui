@@ -9,7 +9,7 @@
   <template class="TextyWindow" parent="AdwApplicationWindow">
     <property name="default-height">600</property>
     <property name="default-width">1000</property>
-    <property name="title">texty</property>
+    <property name="title"/>
     <property name="content">
       <object class="AdwToolbarView">
         <property name="content">
@@ -41,6 +41,12 @@
                 <property name="label" translatable="yes">Save</property>
                 <property name="menu-model">action_menu</property>
                 <property name="tooltip-text" translatable="yes">Save document</property>
+              </object>
+            </child>
+            <child type="title">
+              <object class="AdwWindowTitle" id="window_title">
+                <property name="title">texty</property>
+                <property name="subtitle">a minimal text editor</property>
               </object>
             </child>
             <child type="end">
@@ -151,7 +157,7 @@
       </item>
       <item>
         <attribute name="action">app.about</attribute>
-        <attribute name="label" translatable="yes">_About Texty</attribute>
+        <attribute name="label" translatable="yes">_About texty</attribute>
       </item>
     </section>
   </menu>

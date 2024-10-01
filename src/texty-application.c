@@ -80,11 +80,11 @@ texty_application_about_action (GSimpleAction *action,
   window = gtk_application_get_active_window (GTK_APPLICATION (self));
 
   adw_show_about_dialog (GTK_WIDGET (window),
-                         "application-name", "Texty",
+                         "application-name", "texty",
                          "application-icon", "ca.footeware.c.texty",
                          "developer-name", "Another fine mess by Footeware.ca",
                          "translator-credits", _ ("translator-credits"),
-                         "version", "1.9.1",
+                         "version", "1.10.0",
                          "developers", developers,
                          "copyright", "©2024 Craig Foote",
                          NULL);
